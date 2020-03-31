@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.test.parsers.Tables;
+import com.example.test.parsers.XMLTable;
 import com.example.test.ui.RecycleAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.example.test.parsers.Menu;
@@ -16,10 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Menu map;
@@ -34,10 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initRecycleView();
         createMenu();
-    }
-
-    private void loadItems(ArrayList<String> keys, ArrayList<String> value){
-        recycleAdapter.setItemList(keys, value);
     }
 
     private void initRecycleView(){
@@ -74,32 +66,14 @@ public class MainActivity extends AppCompatActivity {
         drawer.closeDrawers();
         for (Menu.MenuItem item : map.getMenuItems())
             if (item.getName().contentEquals(menuItem.getTitle()) && !item.getUrl().isEmpty())
-                loadInfo(item.getUrl());
+                loadItems(item.getUrl());
     }
 
-    private void loadInfo(String url){
-        /*if ("payments".equals(url))
-            fromJSON();
-        else {*/
-            Tables.xmlTable xmlTable = new Tables.xmlTable(url, this);
-            if (xmlTable.getKeys() != null && xmlTable.getValues() != null)
-                loadItems(xmlTable.getKeys(), xmlTable.getValues());
-        //}
-    }
-
-    private void fromJSON(){
+    private void loadItems(String url){
         try {
-            ArrayList<String> keys = new ArrayList<>(), values = new ArrayList<>();
-            JSONObject jsonObject = new JSONObject(Tables.loadFromAsset(/*url*/"payments", this));
-            JSONArray jsonArray = jsonObject.getJSONArray("keys");
-            for (int i = 0; i < jsonArray.length(); i++)
-                keys.add(jsonArray.getString(i));
-            jsonArray = jsonObject.getJSONArray("values");
-            for (int i = 0; i < jsonArray.length(); i++)
-                values.add(jsonArray.getString(i));
-            loadItems(keys, values);
-        } catch (Exception e) {
-            Toast.makeText(this, "Ошибка загрузки пункта меню", Toast.LENGTH_LONG).show();
+            recycleAdapter.setItemList(new XMLTable(url, this).getElementList());
+        } catch (Exception ignored) {
+            Toast.makeText(this, "Ошибка загрузки данных", Toast.LENGTH_LONG).show();
         }
     }
 

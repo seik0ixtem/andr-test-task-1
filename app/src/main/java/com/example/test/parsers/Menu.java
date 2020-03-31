@@ -1,11 +1,11 @@
 package com.example.test.parsers;
 
 import org.xmlpull.v1.XmlPullParser;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class Menu {
-    private ArrayList<MenuItem> menuItems;
+    private List<MenuItem> menuItems;
 
     private static class TAG {
         static final String PART = "PART"; // start/end tag
@@ -19,7 +19,7 @@ public class Menu {
         menuItems = new ArrayList<>();
     }
 
-    public ArrayList<MenuItem> getMenuItems() {
+    public List<MenuItem> getMenuItems() {
         return menuItems;
     }
 

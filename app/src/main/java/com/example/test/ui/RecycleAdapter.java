@@ -2,22 +2,22 @@ package com.example.test.ui;
 
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.example.test.parsers.XMLTable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.RecycleViewHolder> {
-    private List<String> keyList = new ArrayList<>();
-    private ArrayList<String> valueList = new ArrayList<>();
+    private List<XMLTable.Table.Element> elementList = new ArrayList<>();
     private Context context;
 
     class RecycleViewHolder extends RecyclerView.ViewHolder {
@@ -27,7 +27,8 @@ public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.Recycle
             super(itemView);
             view = (LinearLayout) itemView;
             boolean padding = true;
-            for (int i = 0; i < keyList.size(); i++) {
+
+            for (int i = 0; i < elementList.size(); i++) {
                 if (padding) {
                     createTextView(i, true);
                     padding = false;
@@ -36,35 +37,33 @@ public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.Recycle
             }
         }
 
-        void bind(String values) {
-            try {
-                JSONArray jsonArray = new JSONArray(values);
-                for (int i = 0; i < keyList.size(); i++) {
-                    TextView name = view.findViewWithTag(i);
-                    name.setText(Html.fromHtml("<b>" + keyList.get(i) + ":</b> " + jsonArray.getString(i)));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
         private void createTextView(int tag, boolean padding) {
             TextView name = new TextView(context);
             name.setTag(tag);
             name.setPadding(10, padding ? 50 : 0, 10, 0);
+
             view.addView(name);
         }
+
+        void bind(int position) {
+            XMLTable.Table.Element element;
+            for (int i = 0; i < elementList.size(); i++) {
+                element = elementList.get(i);
+                TextView name = view.findViewWithTag(i);
+                name.setText(Html.fromHtml("<b>" + element.getKeyName() + ":</b> " + element.getValueList().get(position)));
+            }
+        }
+
+
     }
 
-    public void setItemList(ArrayList<String> keys, ArrayList<String> value) {
-        keyList.addAll(keys);
-        valueList.addAll(value);
+    public void setItemList(List<XMLTable.Table.Element> elementList) {
+        this.elementList = elementList;
         notifyDataSetChanged();
     }
 
     public void clearItemList() {
-        keyList.clear();
-        valueList.clear();
+        this.elementList.clear();
         notifyDataSetChanged();
     }
 
@@ -78,11 +77,14 @@ public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.Recycle
 
     @Override
     public void onBindViewHolder(@NonNull RecycleViewHolder holder, int position) {
-        holder.bind(valueList.get(position));
+        holder.bind(position);
     }
 
     @Override
     public int getItemCount() {
-        return valueList.size();
+        if (elementList.size() != 0)
+            return elementList.get(0).getValueList().size();
+        else
+            return 0;
     }
 }
