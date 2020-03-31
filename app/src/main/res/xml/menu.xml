@@ -1,0 +1,106 @@
+<DATA>
+    <PART ID="1013700">
+        <NAME>Информационные сообщения</NAME>
+        <URL>info_messages</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>0</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1016000</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="1013800">
+        <NAME>Информационное сообщение</NAME>
+        <URL>info_message</URL>
+        <VISIBLE_IN_MENU>0</VISIBLE_IN_MENU>
+        <ORDER_NO>0</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1016100</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="1003100">
+        <NAME>Новости</NAME>
+        <URL>news_articles</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>0</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1005500</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="1000800">
+        <NAME>О сервисе</NAME>
+        <URL>about</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>3</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1001100</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+        <PART ID="1014200">
+            <NAME>Политика обработки и защиты персональных данных</NAME>
+            <URL>about/protection_personal_data</URL>
+            <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+            <ORDER_NO>0</ORDER_NO>
+            <ID_SITE_CONTENT_BLOCK_LIST>
+                <ID_SITE_CONTENT_BLOCK>1016600</ID_SITE_CONTENT_BLOCK>
+            </ID_SITE_CONTENT_BLOCK_LIST>
+            <PROPERTY_LIST/>
+            <IS_BANNER>0</IS_BANNER>
+        </PART>
+    </PART>
+    <PART ID="1000100">
+        <NAME>Выставленные счета</NAME>
+        <URL>invoices</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>20</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1000500</ID_SITE_CONTENT_BLOCK>
+            <ID_SITE_CONTENT_BLOCK>1000501</ID_SITE_CONTENT_BLOCK>
+            <ID_SITE_CONTENT_BLOCK>1000503</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="1000200">
+        <NAME>Зачисленные платежи</NAME>
+        <URL>payments</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>30</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1000600</ID_SITE_CONTENT_BLOCK>
+            <ID_SITE_CONTENT_BLOCK>1000601</ID_SITE_CONTENT_BLOCK>
+            <ID_SITE_CONTENT_BLOCK>1000602</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="1000300">
+        <NAME>Приборы учета</NAME>
+        <URL>input_controlchecks</URL>
+        <VISIBLE_IN_MENU>1</VISIBLE_IN_MENU>
+        <ORDER_NO>40</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1000700</ID_SITE_CONTENT_BLOCK>
+            <ID_SITE_CONTENT_BLOCK>1000701</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+    <PART ID="9">
+        <NAME>тестовый пункт меню (VISIBLE_IN_MENU=0)</NAME>
+        <URL>online_payment_v1</URL>
+        <VISIBLE_IN_MENU>0</VISIBLE_IN_MENU>
+        <ORDER_NO>0</ORDER_NO>
+        <ID_SITE_CONTENT_BLOCK_LIST>
+            <ID_SITE_CONTENT_BLOCK>1</ID_SITE_CONTENT_BLOCK>
+        </ID_SITE_CONTENT_BLOCK_LIST>
+        <PROPERTY_LIST/>
+        <IS_BANNER>0</IS_BANNER>
+    </PART>
+</DATA>

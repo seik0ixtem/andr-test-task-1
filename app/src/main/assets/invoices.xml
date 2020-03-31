@@ -1,0 +1,283 @@
+<xml>
+    <metadata>
+        <remark>table_accounts</remark>
+        <fc>11</fc>
+        <lim>13</lim>
+        <refresh>1</refresh>
+        <save_excel>1</save_excel>
+        <operation_list>
+            <operation prit="10" mode="10" title="печать счетов">
+                <!--  <context>!natural!</context>  -->
+                <parameters>
+                    <parameter name="id_operation_type">1051</parameter>
+                </parameters>
+            </operation>
+            <operation prit="4" mode="4" title="оплатить счета" type="gazprombank"/>
+        </operation_list>
+        <style_list>
+            <style id_style="1">
+                <![CDATA[ 
+ background-color: white;
+ ]]>
+            </style>
+        </style_list>
+        <d>
+            <f dt="n" always_show="yes"/>
+            <f rkey="operation_checkbox" fno="0"/>
+            <f dt="s" minwidth="75px" hide_if_value_same="yes">Номер <br /> договора</f>
+            <f dt="s" minwidth="75px">Номер документа</f>
+            <f dt="d">Дата документа</f>
+            <f dt="d">Период</f>
+            <f dt="s" minwidth="50px">Вид документа</f>
+            <f dt="d" hide="yes">Оплатить до</f>
+            <f dt="n" align="right" show_if_shows_any="9">Сумма полного <br /> зачисления</f>
+            <f dt="n" align="right" hide_if_value_all="0|0.00">Сумма льгот</f>
+            <f dt="n" align="right">Сумма зачисления (без НДС)</f>
+            <f dt="n" align="right">НДС</f>
+            <f dt="n" align="right">Сумма итого (в т.ч. НДС)</f>
+            <f dt="n" align="right">Сумма оплат</f>
+            <f rkey="account_details" fno="13"/>
+            <f dt="n" align="right">Сумма долга</f>
+        </d>
+    </metadata>
+    <r>
+        <m>2018</m>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191080021806</f>
+        <f>102918720</f>
+        <f>102918720-60</f>
+        <f>31.10.2018</f>
+        <f>октябрь 2018</f>
+        <f>cчет</f>
+        <f>01.12.2018</f>
+        <f>28.35</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>28.35</f>
+        <f>28.35</f>
+        <f>:account_details:2:191080021806</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191072415327</f>
+        <f>102918720</f>
+        <f>102918720-59</f>
+        <f>30.09.2018</f>
+        <f>сеятябрь 2018</f>
+        <f>cчет</f>
+        <f>01.11.2018</f>
+        <f>765.90</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>765.90</f>
+        <f>765.90</f>
+        <f>:account_details:2:191072415327</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191065574327</f>
+        <f>102918720</f>
+        <f>102918720-58</f>
+        <f>31.08.2018</f>
+        <f>јвгуст 2018</f>
+        <f>cчет</f>
+        <f>01.10.2018</f>
+        <f>765.90</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>765.90</f>
+        <f>765.90</f>
+        <f>:account_details:2:191065574327</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191059231470</f>
+        <f>102918720</f>
+        <f>102918720-57</f>
+        <f>01.08.2018</f>
+        <f>июль 2018</f>
+        <f>cчет</f>
+        <f>01.09.2018</f>
+        <f>765.90</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>765.90</f>
+        <f>765.90</f>
+        <f>:account_details:2:191059231470</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191051621977</f>
+        <f>102918720</f>
+        <f>102918720-56</f>
+        <f>02.07.2018</f>
+        <f>июяь 2018</f>
+        <f>cчет</f>
+        <f>01.08.2018</f>
+        <f>737.60</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>737.60</f>
+        <f>737.60</f>
+        <f>:account_details:2:191051621977</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191043278489</f>
+        <f>102918720</f>
+        <f>102918720-55</f>
+        <f>01.06.2018</f>
+        <f>май 2018</f>
+        <f>cчет</f>
+        <f>01.07.2018</f>
+        <f>667.30</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>667.30</f>
+        <f>667.30</f>
+        <f>:account_details:2:191043278489</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191035235134</f>
+        <f>102918720</f>
+        <f>102918720-54</f>
+        <f>28.04.2018</f>
+        <f>апрель 2018</f>
+        <f>cчет</f>
+        <f>01.06.2018</f>
+        <f>878.29</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>878.29</f>
+        <f>878.29</f>
+        <f>:account_details:2:191035235134</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191025537690</f>
+        <f>102918720</f>
+        <f>102918720-53</f>
+        <f>31.03.2018</f>
+        <f>март 2018</f>
+        <f>cчет</f>
+        <f>01.05.2018</f>
+        <f>793.30</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>793.30</f>
+        <f>793.30</f>
+        <f>:account_details:2:191025537690</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191012059029</f>
+        <f>102918720</f>
+        <f>102918720-52</f>
+        <f>28.02.2018</f>
+        <f>февраль 2018</f>
+        <f>cчет</f>
+        <f>01.04.2018</f>
+        <f>819.07</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>819.07</f>
+        <f>819.07</f>
+        <f>:account_details:2:191012059029</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:191005203745</f>
+        <f>102918720</f>
+        <f>102918720-51</f>
+        <f>31.01.2018</f>
+        <f>яяварь 2018</f>
+        <f>cчет</f>
+        <f>01.03.2018</f>
+        <f>820.03</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>820.03</f>
+        <f>820.03</f>
+        <f>:account_details:2:191005203745</f>
+        <f>0.00</f>
+    </r>
+    <r>
+        <m>2017</m>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:190997608966</f>
+        <f>102918720</f>
+        <f>102918720-50</f>
+        <f>30.12.2017</f>
+        <f>декабрь 2017</f>
+        <f>cчет</f>
+        <f>01.02.2018</f>
+        <f>850.56</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>850.56</f>
+        <f>850.56</f>
+        <f>:account_details:2:190997608966</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:190985593893</f>
+        <f>102918720</f>
+        <f>102918720-49</f>
+        <f>05.12.2017</f>
+        <f/>
+        <f>cчет для јкции</f>
+        <f>01.02.2018</f>
+        <f>761.01</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>761.01</f>
+        <f>0.00</f>
+        <f>:account_details:2:190985593893</f>
+        <f>0.00</f>
+    </r>
+    <r id_style="1">
+        <f> </f>
+        <f>:operation_checkbox:2:190984031923</f>
+        <f>102918720</f>
+        <f>102918720-48</f>
+        <f>30.11.2017</f>
+        <f>Ноябрь 2017</f>
+        <f>cчет</f>
+        <f>01.01.2018</f>
+        <f>1 098.64</f>
+        <f>0.00</f>
+        <f/>
+        <f/>
+        <f>1 098.64</f>
+        <f>1 098.64</f>
+        <f>:account_details:2:190984031923</f>
+        <f>0.00</f>
+    </r>
+</xml>
