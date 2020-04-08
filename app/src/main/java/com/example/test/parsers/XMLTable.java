@@ -15,6 +15,8 @@ public class XMLTable {
     private Context context;
     private String url;
     private List<Table.Element> elementList;
+    private int eventType;
+    private XmlPullParser parser;
 
     private enum TAG {
         d,
@@ -37,20 +39,12 @@ public class XMLTable {
     }
 
     private void loadXMLTable() throws Exception {
-        XmlPullParser parser = initParser();
-        Table table = new Table(parser);
-        int eventType = parser.getEventType();
+        parser = initParser();
+        Table table = new Table();
+        eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
-            switch (eventType) {
-                case XmlPullParser.START_TAG:
-                    table.startTag();
-                    break;
-                case XmlPullParser.TEXT:
-                    table.setCurrentText();
-                    break;
-                case XmlPullParser.END_TAG:
-                    table.endTag();
-                    break;
+            if (eventType == XmlPullParser.START_TAG) {
+                table.startTag();
             }
             eventType = parser.next();
         }
@@ -78,72 +72,38 @@ public class XMLTable {
     }
 
     public class Table {
+        private int indexKey; //индекс ключа для значения
         private String currentText;
-        XmlPullParser parser;
-        boolean isKey, inEntry;
-        int indexKey; //индекс ключа для значения
 
-        Table(XmlPullParser parser) {
-            this.parser = parser;
+        Table() {
             elementList = new ArrayList<>();
         }
 
-        String getCurrentText() {
+        private String getCurrentText() {
             if (currentText == null)
                 currentText = "";
             return currentText;
         }
 
-        void setCurrentText() {
-            if (inEntry)
-                this.currentText = parser.getText().trim();
+        private void setCurrentText() {
+            this.currentText = parser.getText().trim();
         }
 
-        void startTag() {
+        private void startTag() {
             try {
                 switch (TAG.valueOf(parser.getName())) {
                     case d:
-                        isKey = true;
-                        break;
-                    case f:
-                        inEntry = true;
-                        if (isKey) {
-                            Element element = new Element();
-                            element.parseAttributes();
-                            elementList.add(element);
-                        }
+                        new D(); //список колонок
                         break;
                     case r:
-                        inEntry = true;
-                        isKey = false;
-                        indexKey = 0;
+                        new R(); // список значений
                         break;
                 }
             } catch (Exception ignored) {
             }
         }
 
-        void endTag() {
-            try {
-                if (inEntry) {
-                    switch (TAG.valueOf(parser.getName())) {
-                        case f:
-                            if (isKey)
-                                elementList.get(elementList.size() - 1).setKeyName(getCurrentText()); //получаем ласт элемент и задаем имя ключа
-                            else
-                                elementList.get(indexKey++).getValueList().add(getCurrentText());
-                            break;
-                        case r:
-                        case d:
-                            inEntry = false;
-                            break;
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-        }
-
-        void readAttributes() {
+        private void readAttributes() {
             for (Element element : elementList)
                 readAttributesForElement(element);
             for (Element element : elementList)
@@ -165,7 +125,7 @@ public class XMLTable {
         }
 
         private void readAttributesForElement(Element element) { //при setHide(true) выходим из метода
-            isKey = false;
+            boolean isKey = false;
             for (Attribute attribute : element.getAttributeList())
                 switch (attribute.getName()) {
                     case hide:
@@ -274,8 +234,6 @@ public class XMLTable {
             void setHide() {
                 this.hide = true;
             }
-
-
         }
 
         private class Attribute {
@@ -293,6 +251,61 @@ public class XMLTable {
 
             String getValue() {
                 return value;
+            }
+        }
+
+        private class D {
+            D() throws Exception {
+                elementList = new ArrayList<>();
+                while (eventType != XmlPullParser.END_TAG) {
+                    if (eventType == XmlPullParser.START_TAG
+                            && parser.getName().equals(TAG.f.toString()))
+                        new F(true);
+                    eventType = parser.next();
+                }
+            }
+        }
+
+        private class R {
+            R() throws Exception {
+                indexKey = 0;
+                while (eventType != XmlPullParser.END_TAG) {
+                    if (TAG.f.toString().equals(parser.getName()))
+                        new F(false);
+                    eventType = parser.next();
+                }
+            }
+        }
+
+        private class F {
+            F(boolean column) throws Exception {
+                if (column)
+                    fromColumn();
+                else
+                    fromValues();
+                currentText = "";
+            }
+
+            private void fromColumn() throws Exception {
+                Element element = new Element();
+                element.parseAttributes();
+                findText();
+                element.setKeyName(getCurrentText());
+                elementList.add(element);
+
+            }
+
+            private void fromValues() throws Exception {
+                findText();
+                elementList.get(indexKey++).getValueList().add(getCurrentText());
+            }
+
+            private void findText() throws Exception{
+                while (eventType != XmlPullParser.END_TAG) {
+                    if (eventType == XmlPullParser.TEXT)
+                        setCurrentText();
+                    eventType = parser.next();
+                }
             }
         }
     }

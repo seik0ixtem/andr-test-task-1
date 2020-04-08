@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadItems(String url){
         try {
             recycleAdapter.setItemList(new XMLTable(url, this).getElementList());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             Toast.makeText(this, "Ошибка загрузки данных", Toast.LENGTH_LONG).show();
         }
     }

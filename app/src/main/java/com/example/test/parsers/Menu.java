@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Menu {
     private List<MenuItem> menuItems;
+    private int eventType;
 
-    private static class TAG {
-        static final String PART = "PART"; // start/end tag
-        static final String NAME = "NAME";
-        static final String URL = "URL";
-        static final String VISIBLE_IN_MENU = "VISIBLE_IN_MENU";
-        static final String ORDER_NO = "ORDER_NO";
+    enum TAG {
+        PART,
+        NAME,
+        URL,
+        VISIBLE_IN_MENU,
     }
 
     public Menu() {
@@ -23,51 +23,17 @@ public class Menu {
         return menuItems;
     }
 
-    public boolean parse(XmlPullParser xpp) {
+    public boolean parse(XmlPullParser parser) {
         boolean status = true;
-        MenuItem currentItem = null;
-        boolean inEntry = false;
-        String textValue = "";
 
         try {
-            int eventType = xpp.getEventType();
+            eventType = parser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
-
-                String tagName = xpp.getName();
-                switch (eventType) {
-                    case XmlPullParser.START_TAG:
-                        if ("PART".equalsIgnoreCase(tagName)) {
-                            inEntry = true;
-                            currentItem = new MenuItem();
-                        }
-                        break;
-                    case XmlPullParser.TEXT:
-                        textValue = xpp.getText();
-                        break;
-                    case XmlPullParser.END_TAG:
-                        if (inEntry) {
-                            switch (tagName) {
-                                case TAG.PART:
-                                    menuItems.add(currentItem);
-                                    inEntry = false;
-                                    break;
-                                case TAG.NAME:
-                                    currentItem.setName(textValue);
-                                    break;
-                                case TAG.URL:
-                                    currentItem.setUrl(textValue);
-                                    break;
-                                case TAG.VISIBLE_IN_MENU:
-                                    currentItem.setVisible(textValue.equals("1"));
-                                    break;
-                                case TAG.ORDER_NO:
-                                    currentItem.setOrder(Integer.parseInt(textValue));
-                                    break;
-                            }
-                        }
-                        break;
+                if (eventType == XmlPullParser.START_TAG) {
+                    new Part(parser);
                 }
-                eventType = xpp.next();
+                eventType = parser.next();
+
             }
         } catch (Exception e) {
             status = false;
@@ -76,10 +42,50 @@ public class Menu {
         return status;
     }
 
+    private class Part {
+        String textValue = "";
+        MenuItem currentItem;
+        Part(XmlPullParser parser) throws Exception{
+
+            currentItem = new MenuItem();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
+                    case XmlPullParser.TEXT:
+                        textValue = parser.getText();
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if (endTag(parser.getName()))
+                            return;
+                        break;
+                }
+                eventType = parser.next();
+            }
+        }
+
+        private boolean endTag(String name){
+            try {
+                switch (TAG.valueOf(name)) {
+                    case PART:
+                        menuItems.add(currentItem);
+                        return true;
+                    case NAME:
+                        currentItem.setName(textValue);
+                        break;
+                    case URL:
+                        currentItem.setUrl(textValue);
+                        break;
+                    case VISIBLE_IN_MENU:
+                        currentItem.setVisible(textValue.equals("1"));
+                        break;
+                }
+            } catch (Exception ignored) {}
+            return false;
+        }
+    }
+
     public static class MenuItem {
         private String name, url;
         private boolean visible;
-        private int order;
 
         public String getName() {
             return name;
@@ -103,14 +109,6 @@ public class Menu {
 
         void setVisible(boolean visible) {
             this.visible = visible;
-        }
-
-        public int getOrder() {
-            return order;
-        }
-
-        void setOrder(int order) {
-            this.order = order;
         }
     }
 }
