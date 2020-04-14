@@ -2,22 +2,20 @@ package com.example.test.ui;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
-import com.example.test.parsers.XMLTable;
+import com.example.test.parsers.Element;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.RecycleViewHolder> {
-    private List<XMLTable.Table.Element> elementList = new ArrayList<>();
+    private List<Element> elementList = new ArrayList<>();
     private Context context;
 
     class RecycleViewHolder extends RecyclerView.ViewHolder {
@@ -46,7 +44,7 @@ public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.Recycle
         }
 
         void bind(int position) {
-            XMLTable.Table.Element element;
+            Element element;
             for (int i = 0; i < elementList.size(); i++) {
                 element = elementList.get(i);
                 TextView name = view.findViewWithTag(i);
@@ -57,7 +55,7 @@ public class RecycleAdapter  extends RecyclerView.Adapter<RecycleAdapter.Recycle
 
     }
 
-    public void setItemList(List<XMLTable.Table.Element> elementList) {
+    public void setItemList(List<Element> elementList) {
         this.elementList = elementList;
         notifyDataSetChanged();
     }

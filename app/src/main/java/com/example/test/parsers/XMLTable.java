@@ -2,6 +2,9 @@ package com.example.test.parsers;
 
 import android.app.Activity;
 import android.content.Context;
+import com.example.test.parsers.Tag.D;
+import com.example.test.parsers.Tag.R;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
@@ -14,17 +17,16 @@ public class XMLTable {
 
     private Context context;
     private String url;
-    private List<Table.Element> elementList;
-    private int eventType;
+    private List<Element> elementList;
     private XmlPullParser parser;
 
-    private enum TAG {
+    public enum TAG {
         d,
         r,
         f
     }
 
-    private enum AttributeName {
+    enum AttributeName {
         hide_if_value_same,
         hide,
         show_if_shows_any,
@@ -35,20 +37,122 @@ public class XMLTable {
     public XMLTable(String url, Activity context) throws Exception {
         this.context = context;
         this.url = url;
+        this.elementList = new ArrayList<>();
         loadXMLTable();
     }
 
     private void loadXMLTable() throws Exception {
         parser = initParser();
-        Table table = new Table();
-        eventType = parser.getEventType();
+        int eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG) {
-                table.startTag();
+                startTag();
             }
             eventType = parser.next();
         }
-        table.readAttributes();
+        readAttributes();
+    }
+
+    private void startTag() {
+        try {
+            switch (TAG.valueOf(parser.getName())) {
+                case d:
+                    elementList = new D(parser).getElementList(); //список колонок
+                    break;
+                case r:
+                    new R(parser, elementList); // список значений
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void readAttributes() {
+        for (Element element : elementList)
+            readAttributesForElement(element);
+        for (Element element : elementList)
+            attributeShowIfShow(element);
+        removeHideElement();
+    }
+
+    private void removeHideElement() { //удаляем скрытые элементы и очищаем аттрибуты, т.к. больше они не понадобятся
+        int shift = 0;
+        int size = elementList.size();
+        for (int i = 0; i < size; i++) {
+            Element element = elementList.get(i - shift);
+            if (element.isHide()) {
+                elementList.remove(i - shift);
+                shift++;
+            } else
+                element.getAttributeList().clear();
+        }
+    }
+
+    private void readAttributesForElement(Element element) { //при setHide(true) выходим из метода
+        boolean isKey = false;
+        for (Attribute attribute : element.getAttributeList())
+            switch (attribute.getName()) {
+                case hide:
+                    if (attribute.getValue().equalsIgnoreCase("yes")) {
+                        element.setHide();
+                        return;
+                    }
+                    break;
+                case hide_if_value_same: //скрыть если значение элем. совпдают
+                    boolean found = false;
+                    String value = element.getValueList().get(0);
+                    for (String list : element.getValueList()) {
+                        if (!value.equals(list)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        element.setHide();
+                        return;
+                    }
+                    break;
+                case hide_if_value_all: //скрыть если все значения = ....
+                    Scanner s = new Scanner(attribute.getValue()).useDelimiter("\\|");
+                    found = false;
+                    while (s.hasNext()) {
+                        if (found)
+                            found = false;
+                        String item = s.next();
+                        for (String current : element.getValueList()) {
+                            if (!current.equalsIgnoreCase(item)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        element.setHide();
+                        return;
+                    }
+                    break;
+                case dt:
+                    isKey = true;
+                    break;
+            }
+        if (!isKey || findEmptyElement(element))
+            element.setHide();
+    }
+
+    private boolean findEmptyElement(Element element) {
+        for (String current : element.getValueList())
+            if (!current.isEmpty())
+                return false;
+        return true;
+    }
+
+    private void attributeShowIfShow(Element element) {
+        for (Attribute attribute : element.getAttributeList())
+            if (attribute.getName().equals(AttributeName.show_if_shows_any)
+                    && elementList.get(Integer.parseInt(attribute.getValue())).isHide()) {
+                element.setHide();
+                return;
+            }
     }
 
     private XmlPullParser initParser() throws Exception {
@@ -65,252 +169,14 @@ public class XMLTable {
         InputStream is = context.getAssets().open(url);
         int size = is.available();
         byte[] buffer = new byte[size];
+        //noinspection ResultOfMethodCallIgnored
         is.read(buffer);
         is.close();
         result = new String(buffer);
         return result;
     }
 
-    public class Table {
-        private int indexKey; //индекс ключа для значения
-        private String currentText;
-
-        Table() {
-            elementList = new ArrayList<>();
-        }
-
-        private String getCurrentText() {
-            if (currentText == null)
-                currentText = "";
-            return currentText;
-        }
-
-        private void setCurrentText() {
-            this.currentText = parser.getText().trim();
-        }
-
-        private void startTag() {
-            try {
-                switch (TAG.valueOf(parser.getName())) {
-                    case d:
-                        new D(); //список колонок
-                        break;
-                    case r:
-                        new R(); // список значений
-                        break;
-                }
-            } catch (Exception ignored) {
-            }
-        }
-
-        private void readAttributes() {
-            for (Element element : elementList)
-                readAttributesForElement(element);
-            for (Element element : elementList)
-                attributeShowIfShow(element);
-            removeHideElement();
-        }
-
-        private void removeHideElement() { //удаляем скрытые элементы и очищаем аттрибуты, т.к. больше они не понадобятся
-            int shift = 0;
-            int size = elementList.size();
-            for (int i = 0; i < size; i++) {
-                Element element = elementList.get(i - shift);
-                if (element.isHide()) {
-                    elementList.remove(i - shift);
-                    shift++;
-                } else
-                    element.getAttributeList().clear();
-            }
-        }
-
-        private void readAttributesForElement(Element element) { //при setHide(true) выходим из метода
-            boolean isKey = false;
-            for (Attribute attribute : element.getAttributeList())
-                switch (attribute.getName()) {
-                    case hide:
-                        if (attribute.getValue().equalsIgnoreCase("yes")) {
-                            element.setHide();
-                            return;
-                        }
-                        break;
-                    case hide_if_value_same: //скрыть если значение элем. совпдают
-                        boolean found = false;
-                        String value = element.getValueList().get(0);
-                        for (String list : element.getValueList()) {
-                            if (!value.equals(list)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            element.setHide();
-                            return;
-                        }
-                        break;
-                    case hide_if_value_all: //скрыть если все значения = ....
-                        Scanner s = new Scanner(attribute.getValue()).useDelimiter("\\|");
-                        found = false;
-                        while (s.hasNext()) {
-                            if (found)
-                                found = false;
-                            String item = s.next();
-                            for (String current : element.getValueList()) {
-                                if (!current.equalsIgnoreCase(item)) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!found) {
-                            element.setHide();
-                            return;
-                        }
-                        break;
-                    case dt:
-                        isKey = true;
-                        break;
-                }
-            if (!isKey || findEmptyElement(element))
-                element.setHide();
-        }
-
-        private boolean findEmptyElement(Element element) {
-            for (String current : element.getValueList())
-                if (!current.isEmpty())
-                    return false;
-            return true;
-        }
-
-        private void attributeShowIfShow(Element element) {
-            for (Attribute attribute : element.getAttributeList())
-                if (attribute.getName().equals(AttributeName.show_if_shows_any)
-                        && elementList.get(Integer.parseInt(attribute.getValue())).isHide()) {
-                    element.setHide();
-                    return;
-                }
-        }
-
-        public class Element { //элемент таблицы: имя ключа, его аттрибуты и значения
-            private String keyName;
-            private List<String> valueList;
-            private List<Attribute> attributeList;
-            private boolean hide;
-
-            Element() {
-                this.attributeList = new ArrayList<>();
-                this.valueList = new ArrayList<>();
-                this.hide = false;
-            }
-
-            void parseAttributes() {
-                for (AttributeName attr : AttributeName.values()) {
-                    String AttributeValue = parser.getAttributeValue(null, attr.name());
-                    if (AttributeValue != null)
-                        attributeList.add(new Attribute(attr, AttributeValue));
-                }
-            }
-
-            void setKeyName(String keyName) {
-                this.keyName = keyName;
-            }
-
-            public String getKeyName() {
-                return keyName;
-            }
-
-            public List<String> getValueList() {
-                return valueList;
-            }
-
-            List<Attribute> getAttributeList() {
-                return attributeList;
-            }
-
-            boolean isHide() {
-                return hide;
-            }
-
-            void setHide() {
-                this.hide = true;
-            }
-        }
-
-        private class Attribute {
-            AttributeName name;
-            String value;
-
-            Attribute(AttributeName name, String value) {
-                this.name = name;
-                this.value = value;
-            }
-
-            AttributeName getName() {
-                return name;
-            }
-
-            String getValue() {
-                return value;
-            }
-        }
-
-        private class D {
-            D() throws Exception {
-                elementList = new ArrayList<>();
-                while (eventType != XmlPullParser.END_TAG) {
-                    if (eventType == XmlPullParser.START_TAG
-                            && parser.getName().equals(TAG.f.toString()))
-                        new F(true);
-                    eventType = parser.next();
-                }
-            }
-        }
-
-        private class R {
-            R() throws Exception {
-                indexKey = 0;
-                while (eventType != XmlPullParser.END_TAG) {
-                    if (TAG.f.toString().equals(parser.getName()))
-                        new F(false);
-                    eventType = parser.next();
-                }
-            }
-        }
-
-        private class F {
-            F(boolean column) throws Exception {
-                if (column)
-                    fromColumn();
-                else
-                    fromValues();
-                currentText = "";
-            }
-
-            private void fromColumn() throws Exception {
-                Element element = new Element();
-                element.parseAttributes();
-                findText();
-                element.setKeyName(getCurrentText());
-                elementList.add(element);
-
-            }
-
-            private void fromValues() throws Exception {
-                findText();
-                elementList.get(indexKey++).getValueList().add(getCurrentText());
-            }
-
-            private void findText() throws Exception{
-                while (eventType != XmlPullParser.END_TAG) {
-                    if (eventType == XmlPullParser.TEXT)
-                        setCurrentText();
-                    eventType = parser.next();
-                }
-            }
-        }
-    }
-
-    public List<Table.Element> getElementList() {
+    public List<Element> getElementList() {
         return elementList;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.test;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     Toolbar toolbar;
     DrawerLayout drawer;
+    public static final String logTag = "workError";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +76,19 @@ public class MainActivity extends AppCompatActivity {
             recycleAdapter.setItemList(new XMLTable(url, this).getElementList());
         } catch (Exception e) {
             Toast.makeText(this, "Ошибка загрузки данных", Toast.LENGTH_LONG).show();
+            Log.d(logTag, e.getMessage());
         }
     }
 
     private void buildMenu(android.view.Menu menu){
-        map = new Menu();
-       if (map.parse(getResources().getXml(R.xml.menu)))
-           for (Menu.MenuItem item : map.getMenuItems())
-               if (item.isVisible())
-                   menu.add(item.getName());
+        try {
+            map = new Menu(getResources().getXml(R.xml.menu));
+            if (map.isParse())
+                for (Menu.MenuItem item : map.getMenuItems())
+                    if (item.isVisible())
+                        menu.add(item.getName());
+        } catch (Exception e){
+            Log.d(logTag, e.getMessage());
+        }
     } // генерация меню
 }
