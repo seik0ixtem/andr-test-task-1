@@ -2,13 +2,13 @@ package com.example.test.parsers;
 
 import android.app.Activity;
 import android.content.Context;
+
 import com.example.test.parsers.Tag.D;
 import com.example.test.parsers.Tag.R;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
-import java.io.InputStream;
-import java.io.StringReader;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -21,17 +21,37 @@ public class XMLTable {
     private XmlPullParser parser;
 
     public enum TAG {
-        d,
-        r,
-        f
+        D("d"),
+        R("r"),
+        F("f");
+
+        private String value;
+
+        TAG(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     enum AttributeName {
-        hide_if_value_same,
-        hide,
-        show_if_shows_any,
-        hide_if_value_all,
-        dt
+        Dt("dt"),
+        HideIfValue("hide_if_value_same"),
+        Hide("hide"),
+        ShowIfShows("show_if_shows_any"),
+        HideIfValueAll("hide_if_value_all");
+
+        private String value;
+
+        AttributeName(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     public XMLTable(String url, Activity context) throws Exception {
@@ -53,18 +73,19 @@ public class XMLTable {
         readAttributes();
     }
 
-    private void startTag() {
-        try {
-            switch (TAG.valueOf(parser.getName())) {
-                case d:
-                    elementList = new D(parser).getElementList(); //список колонок
-                    break;
-                case r:
-                    new R(parser, elementList); // список значений
-                    break;
+    private void startTag() throws Exception {
+        for (TAG tag : TAG.values())
+            if (tag.getValue().equals(parser.getName())) {
+                switch (tag) {
+                    case D:
+                        elementList = new D(parser).elementList; //список колонок
+                        break;
+                    case R:
+                        new R(parser, elementList); // список значений
+                        break;
+                }
+                break;
             }
-        } catch (Exception ignored) {
-        }
     }
 
     private void readAttributes() {
@@ -72,33 +93,12 @@ public class XMLTable {
             readAttributesForElement(element);
         for (Element element : elementList)
             attributeShowIfShow(element);
-        removeHideElement();
-    }
-
-    private void removeHideElement() { //удаляем скрытые элементы и очищаем аттрибуты, т.к. больше они не понадобятся
-        int shift = 0;
-        int size = elementList.size();
-        for (int i = 0; i < size; i++) {
-            Element element = elementList.get(i - shift);
-            if (element.isHide()) {
-                elementList.remove(i - shift);
-                shift++;
-            } else
-                element.getAttributeList().clear();
-        }
     }
 
     private void readAttributesForElement(Element element) { //при setHide(true) выходим из метода
-        boolean isKey = false;
         for (Attribute attribute : element.getAttributeList())
             switch (attribute.getName()) {
-                case hide:
-                    if (attribute.getValue().equalsIgnoreCase("yes")) {
-                        element.setHide();
-                        return;
-                    }
-                    break;
-                case hide_if_value_same: //скрыть если значение элем. совпдают
+                case HideIfValue: //скрыть если значение элем. совпдают
                     boolean found = false;
                     String value = element.getValueList().get(0);
                     for (String list : element.getValueList()) {
@@ -112,7 +112,7 @@ public class XMLTable {
                         return;
                     }
                     break;
-                case hide_if_value_all: //скрыть если все значения = ....
+                case HideIfValueAll: //скрыть если все значения = ....
                     Scanner s = new Scanner(attribute.getValue()).useDelimiter("\\|");
                     found = false;
                     while (s.hasNext()) {
@@ -131,11 +131,8 @@ public class XMLTable {
                         return;
                     }
                     break;
-                case dt:
-                    isKey = true;
-                    break;
             }
-        if (!isKey || findEmptyElement(element))
+        if (findEmptyElement(element))
             element.setHide();
     }
 
@@ -148,7 +145,7 @@ public class XMLTable {
 
     private void attributeShowIfShow(Element element) {
         for (Attribute attribute : element.getAttributeList())
-            if (attribute.getName().equals(AttributeName.show_if_shows_any)
+            if (attribute.getName().equals(AttributeName.ShowIfShows)
                     && elementList.get(Integer.parseInt(attribute.getValue())).isHide()) {
                 element.setHide();
                 return;
@@ -160,23 +157,20 @@ public class XMLTable {
                 .newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser parser = factory.newPullParser();
-        parser.setInput(new StringReader(loadFromAsset(url + ".xml", context).replaceAll("<br\\s?/>", "")));
+        parser.setInput(context.getAssets().open(url + ".xml"), null);
         return parser;
     }
 
-    private static String loadFromAsset(String url, Context context) throws Exception {
-        String result;
-        InputStream is = context.getAssets().open(url);
-        int size = is.available();
-        byte[] buffer = new byte[size];
-        //noinspection ResultOfMethodCallIgnored
-        is.read(buffer);
-        is.close();
-        result = new String(buffer);
+    public List<Element> getElementList(boolean isVisible) {
+        List<Element> result;
+        if (isVisible) {
+            result = new ArrayList<>();
+            for (Element element : elementList) {
+                if (!element.isHide())
+                    result.add(element);
+            }
+        } else
+            result = elementList;
         return result;
-    }
-
-    public List<Element> getElementList() {
-        return elementList;
     }
 }

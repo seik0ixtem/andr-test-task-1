@@ -9,20 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class D {
-    private List<Element> elementList;
+    public final List<Element> elementList;
 
     public D(XmlPullParser parser) throws Exception {
         elementList = new ArrayList<>();
         int eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_TAG) {
             if (eventType == XmlPullParser.START_TAG
-                    && parser.getName().equals(XMLTable.TAG.f.toString()))
-                elementList.add(new F(true, parser).getElement());
+                    && parser.getName().equals(XMLTable.TAG.F.getValue()))
+                elementList.add(new F(true, parser).element);
             eventType = parser.next();
         }
-    }
-
-    public List<Element> getElementList() {
-        return elementList;
     }
 }

@@ -1,32 +1,33 @@
 package com.example.test.parsers;
 
-import android.util.Log;
-
-import com.example.test.MainActivity;
-
 import org.xmlpull.v1.XmlPullParser;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
-    private List<MenuItem> menuItems;
+    private List<MenuItem> menuItems = new ArrayList<>();
     private boolean isParse;
 
     enum TAG {
-        PART,
-        NAME,
-        URL,
-        VISIBLE_IN_MENU,
+        Part("PART"),
+        Name("NAME"),
+        Url("URL"),
+        Visible("VISIBLE_IN_MENU");
+
+        private String value;
+
+        TAG(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
-    public Menu(XmlPullParser parser){
-        menuItems = new ArrayList<>();
-        try {
-            setParse(parse(parser));
-        } catch (Exception e) {
-            setParse(false);
-            Log.d(MainActivity.logTag, e.getMessage());
-        }
+    public Menu(XmlPullParser parser) throws Exception {
+        setParse(parse(parser));
     }
 
     public List<MenuItem> getMenuItems() {
@@ -67,22 +68,23 @@ public class Menu {
         }
 
         private boolean endTag(String name) {
-            try {
-                switch (TAG.valueOf(name)) {
-                    case PART:
-                        return true;
-                    case NAME:
-                        setName(textValue);
-                        break;
-                    case URL:
-                        setUrl(textValue);
-                        break;
-                    case VISIBLE_IN_MENU:
-                        setVisible(textValue.equals("1"));
-                        break;
+            for (TAG tag : TAG.values())
+                if (tag.getValue().equals(name)) {
+                    switch (tag) {
+                        case Part:
+                            return true;
+                        case Name:
+                            setName(textValue);
+                            break;
+                        case Url:
+                            setUrl(textValue);
+                            break;
+                        case Visible:
+                            setVisible(textValue.equals("1"));
+                            break;
+                    }
+                    break;
                 }
-            } catch (Exception ignored) {
-            }
             return false;
         }
 

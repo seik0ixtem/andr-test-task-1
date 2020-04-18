@@ -24,13 +24,13 @@
         <d>
             <f dt="n" always_show="yes"/>
             <f rkey="operation_checkbox" fno="0"/>
-            <f dt="s" minwidth="75px" hide_if_value_same="yes">Номер <br /> договора</f>
+            <f dt="s" minwidth="75px" hide_if_value_same="yes">Номер  договора</f>
             <f dt="s" minwidth="75px">Номер документа</f>
             <f dt="d">Дата документа</f>
             <f dt="d">Период</f>
             <f dt="s" minwidth="50px">Вид документа</f>
             <f dt="d" hide="yes">Оплатить до</f>
-            <f dt="n" align="right" show_if_shows_any="9">Сумма полного <br /> зачисления</f>
+            <f dt="n" align="right" show_if_shows_any="9">Сумма полного  зачисления</f>
             <f dt="n" align="right" hide_if_value_all="0|0.00">Сумма льгот</f>
             <f dt="n" align="right">Сумма зачисления (без НДС)</f>
             <f dt="n" align="right">НДС</f>
