@@ -7,27 +7,23 @@ import org.xmlpull.v1.XmlPullParser;
 class F {
     private String currentText;
     private XmlPullParser parser;
-    private Element element;
+    final Element element;
 
     F(boolean column, XmlPullParser parser) throws Exception {
         this.parser = parser;
-        if (column)
-            fromColumn();
-        else
-            fromValues();
+        element = column ? fromColumn() : fromValues();
     }
 
-    private void fromColumn() throws Exception {
+    private Element fromColumn() throws Exception {
         Element element = new Element(parser);
-        element.parseAttributes();
         findText();
         element.setKeyName(getCurrentText());
-        setElement(element);
-
+        return element;
     }
 
-    private void fromValues() throws Exception {
+    private Element fromValues() throws Exception {
         findText();
+        return null;
     }
 
     private void findText() throws Exception{
@@ -47,13 +43,5 @@ class F {
 
     private void setCurrentText() {
         currentText = parser.getText().trim();
-    }
-
-    Element getElement() {
-        return element;
-    }
-
-    private void setElement(Element element) {
-        this.element = element;
     }
 }

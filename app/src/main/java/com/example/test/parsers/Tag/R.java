@@ -12,7 +12,7 @@ public class R {
         int indexKey = 0;
         int eventType = parser.getEventType();
         while (eventType != XmlPullParser.END_TAG) {
-            if (XMLTable.TAG.f.toString().equals(parser.getName()))
+            if (XMLTable.TAG.F.getValue().equals(parser.getName()))
                 elementList.get(indexKey++).getValueList().add(new F(false, parser).getCurrentText());
             eventType = parser.next();
         }
